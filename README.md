@@ -1,2 +1,26 @@
 # Counter-BC
 Implementation of the Counter-BC algorithm from the paper "I Know What You Meant: Offline Imitation Learning from Imperfect Human Demonstrations"
+
+## Installation and Setup
+
+To install Counter-BC, clone the repo using:
+```
+git clone https://github.com/VT-Collab/Counter_BC.git
+```
+
+You will need to have numpy and torch installed:
+```
+pip3 install numpy torch
+```
+
+## Contents
+
+This respository contains a minimal implementation of the Counter-BC algorithm and baselines, as well as the scripts needed to reproduce our results from the "Intersection" environment. You can run the entire data collection, training, and testing pipeline using `bash.sh`
+
+- `models.py`: Gaussian policy
+- `train_bc.py`: Trains the Gaussian policy using standard behavior cloning
+- `train_ileed.py`: Trains the Gaussian policy using a modified version of ILEED ("Imitation Learning by Estimating Expertise of Demonstrators")
+- `train_bc.py`: Trains the Gaussian policy using method by Sasaki and Yamashina ("Behavioral Cloning from Noisy Demonstrations")
+- `train_counter-bc.py`: Our proposed Algorithm 1 in the manuscript
+- `get_data.py`: Collects dataset of synthetic demonstrations in the Intersection environment
+- `test.py`: Rolls-out the trained policies in the Intersection environment and saves their performance

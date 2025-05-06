@@ -2,10 +2,10 @@
 
 # number of demonstrations
 # each demo (interaction) contains 20 datapoints
-# so 5 demos corresponds to 100 state-action pairs
+# so 5 demos correspond to 100 state-action pairs
 demos=(5 10 20 40 80)
 # number of end-to-end runs per number of demonstrations
-count=10
+count=50
 
 # parameters used in Figure 4, Uniform
 for demos_size in "${demos[@]}"; do

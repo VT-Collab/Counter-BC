@@ -1,5 +1,5 @@
 # Counter-BC
-Implementation of the Counter-BC algorithm from the paper "I Know What You Meant: Offline Imitation Learning from Imperfect Human Demonstrations"
+Implementation of the Counter-BC algorithm from the paper "Counterfactual behavior cloning: Offline imitation learning from imperfect human demonstrations"
 
 ## Installation and Setup
 
@@ -21,9 +21,10 @@ This respository contains a minimal implementation of the Counter-BC algorithm a
 ```
 A description of each file is provided below:
 - `models.py`: Gaussian policy. Trained instances of this policy are saved in "models"
-- `train_bc.py`: Trains the Gaussian policy using standard behavior cloning
+- `train_bc.py`: Trains the Gaussian policy using standard behavior cloning conditioned on the current state
+- `train_bc-rnn.py`: Trains the GaussianRNN policy using standard behavior cloning conditioned on a history of states
 - `train_ileed.py`: Trains the Gaussian policy using a modified version of ILEED ("Imitation Learning by Estimating Expertise of Demonstrators")
-- `train_sasaki.py`: Trains the Gaussian policy using method by Sasaki and Yamashina ("Behavioral Cloning from Noisy Demonstrations")
+- `train_bcnd.py`: Trains the Gaussian policy using BCND method by Sasaki and Yamashina ("Behavioral Cloning from Noisy Demonstrations")
 - `train_counter-bc.py`: Our proposed Algorithm 1 in the manuscript
 - `get_data.py`: Collects a dataset of synthetic demonstrations in the Intersection environment, and saves them to the folder "data"
 - `test.py`: Rolls out the trained policies in the Intersection environment and saves their performance to the folder "results"

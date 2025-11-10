@@ -49,3 +49,46 @@ class GaussianPolicy(nn.Module):
     # sample from policy
     def forward(self, state):
         return self.policy(state).rsample()
+
+
+# Gaussian RNN policy
+class GaussianRNNPolicy(nn.Module):
+    def __init__(self, state_dim, hidden_dim, action_dim):
+        super(GaussianRNNPolicy, self).__init__()
+
+        # recursive network (we found GRU to be most effective, but this could
+        # be replaced with RNN, LSTM, etc.)
+        self.gru = nn.GRU(
+                        input_size=state_dim,
+                        hidden_size=hidden_dim,
+                        num_layers=1,
+                        batch_first=True)
+
+        # multi-layer perceptron
+        self.pi_1 = nn.Linear(hidden_dim, hidden_dim)
+        self.mean_linear = nn.Linear(hidden_dim, action_dim)
+        self.log_std_linear = nn.Linear(hidden_dim, action_dim)
+
+        # helper functions
+        self.m = nn.ReLU()
+        self.apply(weights_init_)
+        self.LOG_SIG_MAX = 2
+        self.LOG_SIG_MIN = -20
+
+    # policy function
+    def policy(self, history):
+        _, h_n = self.gru(history)
+        x = self.m(self.pi_1(h_n.squeeze()))
+        mean = torch.tanh(self.mean_linear(x))
+        log_std = self.log_std_linear(x)
+        log_std = torch.clamp(log_std, min=self.LOG_SIG_MIN, max=self.LOG_SIG_MAX)
+        return Normal(mean, log_std.exp())
+
+    # get sample probability
+    def get_log_prob(self, history, action):
+        normal = self.policy(history)
+        return normal.log_prob(action)
+
+    # sample from policy
+    def forward(self, history):
+        return self.policy(history).rsample()        

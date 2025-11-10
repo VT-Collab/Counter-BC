@@ -28,8 +28,10 @@ def agent(x, y, goal, beta=1.0):
 # while avoiding collision
 def get_dataset(args):
     dataset = []
+    dataset_history = []
     goal_x = np.array([10., 0.])
     goal_y = np.array([0., 10.])
+    state_history = np.zeros((args.n_history, 4))    
     for _ in range(args.n_interactions):
         # initial position of the two vehicles
         x = np.random.uniform([-10, -10], [0, 10], 2)
@@ -49,15 +51,20 @@ def get_dataset(args):
             u2 = agent(y, x, goal_y)
             state = np.array([x[0], x[1], y[0], y[1]])
             datapoint = []
-            datapoint.append(list(state) + list(action))
+            datapoint.append(state.tolist() + action.tolist())
             # sample counterfactuals within radius delta
             for _ in range(50):
                 action1 = action + np.random.uniform(-args.delta, +args.delta, 2)
-                datapoint.append(list(state) + list(action1))
+                datapoint.append(state.tolist() + action1.tolist())
             dataset.append(datapoint)
+            # fifo stack for the state history
+            state_history[:-1, :] = state_history[1:, :]
+            state_history[-1, :] = np.copy(state)
+            dataset_history.append((np.copy(state_history), np.copy(action)))
             x += action
             y += u2
     pickle.dump(dataset, open("data/demos.pkl", "wb"))
+    pickle.dump(dataset_history, open("data/demos_history.pkl", "wb"))    
     print("dataset has this many state-action pairs:", len(dataset))
 
 
@@ -65,6 +72,7 @@ def get_dataset(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--n_interactions', type=int, default=10)
+    parser.add_argument('--n_history', type=int, default=5) 
     parser.add_argument('--noise_type', default="uniform")
     parser.add_argument('--sigma', type=float, default=0.5)
     parser.add_argument('--delta', type=float, default=0.5)

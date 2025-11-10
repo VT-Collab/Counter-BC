@@ -19,7 +19,7 @@ def train_model(args):
 
     # initialize dataset
     print("[-] loading data: " + args.loadname)
-    train_data = MyData(args.loadname)
+    train_data = MyData(None, args.loadname)
     BATCH_SIZE = int(len(train_data) / 10.)
     print("my batch size is:", BATCH_SIZE)
     train_set = DataLoader(dataset=train_data, batch_size=BATCH_SIZE, shuffle=True)
